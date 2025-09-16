@@ -1,46 +1,24 @@
-import { useState } from 'react';
-import { playSound } from '../hooks/useSound';
+import { useState, useEffect } from "react";
+import { safeLocalStorageGet, safeLocalStorageSet } from "../utils/storage";
 
 export default function AndarBahar() {
-  const [msg, setMsg] = useState('');
-  const [balance, setBalance] = useState(
-    parseInt(localStorage.getItem('milano_balance') || '1000')
-  );
+  const [balance, setBalance] = useState(0);
 
-  function play(choice) {
-    const bet = 100;
-    if (balance < bet) {
-      alert('Not enough balance!');
-      return;
-    }
+  useEffect(() => {
+    setBalance(parseInt(safeLocalStorageGet("balance", "0"), 10));
+  }, []);
 
-    playSound('spin.mp3');
-    const result = Math.random() > 0.5 ? 'andar' : 'bahar';
-    let newBalance = balance - bet;
-    let message = `Result: ${result.toUpperCase()} - You lost!`;
-
-    if (choice === result) {
-      newBalance += bet * 2;
-      message = `Result: ${result.toUpperCase()} - You WON!`;
-      playSound('win.mp3');
-    } else {
-      playSound('lose.mp3');
-    }
-
+  const play = () => {
+    const newBalance = balance - 5 + Math.floor(Math.random() * 20);
     setBalance(newBalance);
-    setMsg(message);
-    localStorage.setItem('milano_balance', newBalance);
-  }
+    safeLocalStorageSet("balance", newBalance.toString());
+  };
 
   return (
-    <div className="page center">
-      <h2>🃏 Andar Bahar</h2>
+    <div style={{ textAlign: "center", padding: "40px" }}>
+      <h1>🃏 Andar Bahar</h1>
       <p>Balance: {balance}</p>
-      <div style={{ display:'flex', gap:12, margin:18 }}>
-        <button className="btn" onClick={() => play('andar')}>Andar</button>
-        <button className="btn" onClick={() => play('bahar')}>Bahar</button>
-      </div>
-      <p>{msg}</p>
+      <button onClick={play}>Play</button>
     </div>
   );
 }
