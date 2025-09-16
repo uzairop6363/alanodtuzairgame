@@ -1,54 +1,24 @@
-import { useState } from 'react';
-import { playSound } from '../hooks/useSound';
-
-const fruits = ['🍒', '🍋', '🍇', '🍉', '🍊'];
+import { useState, useEffect } from "react";
+import { safeLocalStorageGet, safeLocalStorageSet } from "../utils/storage";
 
 export default function FruitSlots() {
-  const [slots, setSlots] = useState(['❔','❔','❔']);
-  const [msg, setMsg] = useState('');
-  const [balance, setBalance] = useState(
-    parseInt(localStorage.getItem('milano_balance') || '1000')
-  );
+  const [balance, setBalance] = useState(0);
 
-  function spin() {
-    const bet = 100;
-    if (balance < bet) return alert('Not enough balance!');
-    playSound('spin.mp3');
+  useEffect(() => {
+    setBalance(parseInt(safeLocalStorageGet("balance", "0"), 10));
+  }, []);
 
-    const s = [
-      fruits[Math.floor(Math.random() * fruits.length)],
-      fruits[Math.floor(Math.random() * fruits.length)],
-      fruits[Math.floor(Math.random() * fruits.length)]
-    ];
-    setSlots(s);
-
-    let newBalance = balance - bet;
-    let message = `${s.join(' | ')} - You lost!`;
-
-    if (s[0] === s[1] && s[1] === s[2]) {
-      newBalance += bet * 10;
-      message = `${s.join(' | ')} - JACKPOT! You WON!`;
-      playSound('win.mp3');
-    } else if (s[0] === s[1] || s[1] === s[2]) {
-      newBalance += bet * 3;
-      message = `${s.join(' | ')} - Small win!`;
-      playSound('win.mp3');
-    } else {
-      playSound('lose.mp3');
-    }
-
+  const spin = () => {
+    const newBalance = balance - 2 + Math.floor(Math.random() * 15);
     setBalance(newBalance);
-    setMsg(message);
-    localStorage.setItem('milano_balance', newBalance);
-  }
+    safeLocalStorageSet("balance", newBalance.toString());
+  };
 
   return (
-    <div className="page center">
-      <h2>🍒 Fruit Slots</h2>
+    <div style={{ textAlign: "center", padding: "40px" }}>
+      <h1>🍒 Fruit Slots</h1>
       <p>Balance: {balance}</p>
-      <div style={{ fontSize:48, margin:16 }}>{slots.join(' ')}</div>
-      <button className="btn" onClick={spin}>Spin (100)</button>
-      <p>{msg}</p>
+      <button onClick={spin}>Spin</button>
     </div>
   );
-  }
+}
