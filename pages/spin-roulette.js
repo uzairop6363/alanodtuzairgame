@@ -1,44 +1,25 @@
-import { useState } from 'react';
-import { playSound } from '../hooks/useSound';
+import { useState, useEffect } from "react";
+import { safeLocalStorageGet, safeLocalStorageSet } from "../utils/storage";
 
 export default function SpinRoulette() {
-  const [msg, setMsg] = useState('');
-  const [balance, setBalance] = useState(
-    parseInt(localStorage.getItem('milano_balance') || '1000')
-  );
+  const [balance, setBalance] = useState(0);
 
-  function play(choice) {
-    const bet = 100;
-    if (balance < bet) return alert('Not enough balance!');
-    playSound('spin.mp3');
+  useEffect(() => {
+    setBalance(parseInt(safeLocalStorageGet("balance", "0"), 10));
+  }, []);
 
-    const result = Math.floor(Math.random() * 10); // 0-9 wheel
-    let newBalance = balance - bet;
-    let message = `Result: ${result} - You lost!`;
-
-    if (choice === result) {
-      newBalance += bet * 8;
-      message = `Result: ${result} - You WON!`;
-      playSound('win.mp3');
-    } else {
-      playSound('lose.mp3');
-    }
-
+  const spin = () => {
+    const number = Math.floor(Math.random() * 36);
+    const newBalance = number % 2 === 0 ? balance + 15 : balance - 10;
     setBalance(newBalance);
-    setMsg(message);
-    localStorage.setItem('milano_balance', newBalance);
-  }
+    safeLocalStorageSet("balance", newBalance.toString());
+  };
 
   return (
-    <div className="page center">
-      <h2>🎡 Spin Roulette</h2>
+    <div style={{ textAlign: "center", padding: "40px" }}>
+      <h1>🎡 Spin Roulette</h1>
       <p>Balance: {balance}</p>
-      <div style={{ display:'flex', gap:12, flexWrap:'wrap', margin:18 }}>
-        {[...Array(10).keys()].map(n => (
-          <button key={n} className="btn" onClick={() => play(n)}>{n}</button>
-        ))}
-      </div>
-      <p>{msg}</p>
+      <button onClick={spin}>Spin</button>
     </div>
   );
 }
