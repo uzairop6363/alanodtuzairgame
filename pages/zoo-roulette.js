@@ -1,46 +1,28 @@
-import { useState } from 'react';
-import { playSound } from '../hooks/useSound';
-
-const animals = ['🦁', '🐯', '🐵', '🐼', '🐘', '🐍'];
+import { useState, useEffect } from "react";
+import { safeLocalStorageGet, safeLocalStorageSet } from "../utils/storage";
 
 export default function ZooRoulette() {
-  const [msg, setMsg] = useState('');
-  const [balance, setBalance] = useState(
-    parseInt(localStorage.getItem('milano_balance') || '1000')
-  );
+  const [balance, setBalance] = useState(0);
+  const animals = ["🐅 Tiger", "🦁 Lion", "🐘 Elephant", "🐒 Monkey"];
 
-  function play(choice) {
-    const bet = 100;
-    if (balance < bet) return alert('Not enough balance!');
-    playSound('spin.mp3');
+  useEffect(() => {
+    setBalance(parseInt(safeLocalStorageGet("balance", "0"), 10));
+  }, []);
 
-    const result = animals[Math.floor(Math.random() * animals.length)];
-    let newBalance = balance - bet;
-    let message = `Result: ${result} - You lost!`;
-
-    if (choice === result) {
-      newBalance += bet * 5;
-      message = `Result: ${result} - You WON!`;
-      playSound('win.mp3');
-    } else {
-      playSound('lose.mp3');
-    }
-
+  const spin = () => {
+    const randomAnimal = animals[Math.floor(Math.random() * animals.length)];
+    const win = Math.random() > 0.5;
+    const newBalance = win ? balance + 20 : balance - 10;
     setBalance(newBalance);
-    setMsg(message);
-    localStorage.setItem('milano_balance', newBalance);
-  }
+    safeLocalStorageSet("balance", newBalance.toString());
+    alert("Result: " + randomAnimal);
+  };
 
   return (
-    <div className="page center">
-      <h2>🦁 Zoo Roulette</h2>
+    <div style={{ textAlign: "center", padding: "40px" }}>
+      <h1>🦓 Zoo Roulette</h1>
       <p>Balance: {balance}</p>
-      <div style={{ display:'flex', gap:12, flexWrap:'wrap', margin:18 }}>
-        {animals.map(a => (
-          <button key={a} className="btn" onClick={() => play(a)}>{a}</button>
-        ))}
-      </div>
-      <p>{msg}</p>
+      <button onClick={spin}>Spin</button>
     </div>
   );
-}
+  }
