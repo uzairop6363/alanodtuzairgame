@@ -1,4 +1,5 @@
-// Sounds disabled version
+// hooks/useSound.js
+// 🔇 Sounds fully disabled, safe for deploy
 
 export function playSound() {
   // No sound will play
