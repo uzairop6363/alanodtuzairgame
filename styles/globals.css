@@ -1,0 +1,63 @@
+:root{
+  --bg:#0b0b0f;
+  --card:#1a1e28;
+  --accent:#ffbf3a;
+  --muted:#9aa1a6;
+  --text:#f2f5f7;
+}
+
+body {
+  margin:0;
+  background: radial-gradient(circle at top, #0d1522, #000);
+  color:var(--text);
+  font-family: 'Segoe UI', Roboto, sans-serif;
+}
+
+.page {
+  max-width:960px; margin:24px auto; padding:18px;
+}
+
+.center {
+  display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:80vh;
+}
+
+.brand { font-size:42px; margin:0; color:var(--accent); }
+.glow { text-shadow:0 0 10px var(--accent), 0 0 20px var(--accent); }
+.lead { color:var(--muted); }
+
+.grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(220px,1fr)); gap:18px; margin-top:20px; }
+
+.card {
+  background:var(--card);
+  padding:16px;
+  border-radius:14px;
+  text-align:center;
+  cursor:pointer;
+  transition:transform .25s, box-shadow .25s;
+}
+.card:hover { transform:translateY(-6px) scale(1.05); box-shadow:0 12px 30px rgba(255,191,58,.3); }
+
+.logo { font-size:48px; margin:8px 0; }
+.pulse { animation:pulse 1.6s infinite; }
+@keyframes pulse {
+  0%{ transform:scale(1); }
+  50%{ transform:scale(1.1); }
+  100%{ transform:scale(1); }
+}
+
+.hover-glow:hover { box-shadow:0 0 20px var(--accent); }
+
+.btn {
+  background:var(--accent);
+  color:#111;
+  padding:10px 16px;
+  border:none;
+  border-radius:8px;
+  font-weight:700;
+  cursor:pointer;
+  transition:transform .2s;
+}
+.btn:active { transform:scale(0.95); }
+
+.fade-in { animation:fadeIn 1s ease forwards; opacity:0; }
+@keyframes fadeIn { to { opacity:1; } }
