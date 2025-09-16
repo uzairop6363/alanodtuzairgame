@@ -1,41 +1,18 @@
-import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
-import { playSound } from '../hooks/useSound';
+import Link from "next/link";
 
 export default function Home() {
-  const r = useRouter();
-  const [name, setName] = useState('');
-
-  useEffect(() => {
-    const n = localStorage.getItem('milano_username');
-    if (n) setName(n);
-  }, []);
-
-  function goLobby() {
-    playSound('click.mp3');
-    if (!name) {
-      const username = prompt('Choose a username (local demo):');
-      if (!username) return;
-      localStorage.setItem('milano_username', username);
-      localStorage.setItem('milano_balance', JSON.stringify(1000));
-      setName(username);
-      alert('Account created locally. Balance: 1,000 credits (demo).');
-    }
-    r.push('/lobby');
-  }
-
   return (
-    <div className="page center fade-in">
-      <h1 className="brand glow">🎰 Milano DT</h1>
-      <p className="lead">Demo frontend with sounds, music, animations</p>
-
-      <div style={{ marginTop: 18 }}>
-        <button className="btn primary" onClick={goLobby}>
-          Enter Lobby
-        </button>
-      </div>
-
-      {name && <p style={{ marginTop: 14 }}>Signed in as <strong>{name}</strong></p>}
+    <div style={{ textAlign: "center", padding: "40px" }}>
+      <h1>🎰 Milano DT Lobby</h1>
+      <p>Select a game:</p>
+      <ul style={{ listStyle: "none", padding: 0, fontSize: "20px" }}>
+        <li><Link href="/dragon-tiger">🐉 Dragon Tiger</Link></li>
+        <li><Link href="/andar-bahar">🃏 Andar Bahar</Link></li>
+        <li><Link href="/fruit-slots">🍒 Fruit Slots</Link></li>
+        <li><Link href="/seven-up">🎲 7 Up Down</Link></li>
+        <li><Link href="/spin-roulette">🎡 Spin Roulette</Link></li>
+        <li><Link href="/zoo-roulette">🦓 Zoo Roulette</Link></li>
+      </ul>
     </div>
   );
 }
